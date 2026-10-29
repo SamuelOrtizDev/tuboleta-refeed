@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
 import type { Evento } from "@/data/events";
 import { partesFecha } from "@/lib/formato";
@@ -10,14 +11,26 @@ type Props = {
 };
 
 /**
- * Afiche ficticio del evento, dibujado solo con CSS: gradientes, formas
- * decorativas y tipografía grande. No usa imágenes externas.
+ * Afiche del evento. Por defecto se dibuja solo con CSS: gradientes, formas
+ * decorativas y tipografía grande. Si el evento trae `poster.imagen`, usa esa
+ * foto local (carpeta public/). No usa imágenes externas.
  * Los tamaños de letra usan unidades del contenedor (cqw) para escalar.
  */
 export default function PosterEvento({ evento, variante = "afiche", className = "" }: Props) {
   const { poster } = evento;
   const f = partesFecha(evento.fecha);
   const fechaCorta = `${f.dia} ${f.mesCorto.toUpperCase()}`;
+
+  if (poster.imagen) {
+    return (
+      <PosterConFoto
+        evento={evento}
+        variante={variante}
+        className={className}
+        fechaCorta={fechaCorta}
+      />
+    );
+  }
 
   return (
     <div
@@ -89,6 +102,138 @@ export default function PosterEvento({ evento, variante = "afiche", className = 
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+/**
+ * Afiche para eventos con foto del artista.
+ * - "afiche": la foto llena el recuadro y un degradado oscuro abajo deja leer el texto.
+ * - "banner": fondo de color del evento, texto a la izquierda y la foto enmarcada a la
+ *   derecha, a un tamaño moderado para que no se vea borrosa.
+ */
+function PosterConFoto({
+  evento,
+  variante,
+  className,
+  fechaCorta,
+}: {
+  evento: Evento;
+  variante: "afiche" | "banner";
+  className: string;
+  fechaCorta: string;
+}) {
+  const { poster } = evento;
+  const imagen = poster.imagen!;
+
+  if (variante === "afiche") {
+    return (
+      <div
+        role="img"
+        aria-label={`Afiche de ${evento.artista}, ${evento.gira}`}
+        className={`relative isolate overflow-hidden [container-type:inline-size] ${className}`}
+        style={{ background: poster.fondo, color: poster.texto }}
+      >
+        <Image
+          src={imagen.src}
+          alt=""
+          fill
+          loading="eager"
+          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+          className="-z-10 object-cover"
+          style={{ objectPosition: imagen.posicion ?? "center" }}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(18,10,30,0.92) 0%, rgba(18,10,30,0.6) 36%, rgba(18,10,30,0) 62%)",
+          }}
+        />
+        <div className="relative flex h-full flex-col justify-between p-[7cqw]">
+          <span
+            className="self-start rounded-[1cqw] px-[2.4cqw] py-[1cqw] font-display font-bold uppercase tracking-[0.16em]"
+            style={{ fontSize: "4cqw", background: "#e25856", color: "#ffffff" }}
+          >
+            {evento.gira}
+          </span>
+          <div>
+            <p
+              className="font-display font-black uppercase"
+              style={{ fontSize: "12.5cqw", lineHeight: 0.95, letterSpacing: "-0.01em" }}
+            >
+              {evento.artista}
+            </p>
+            <p
+              className="mt-[3cqw] font-display font-extrabold uppercase"
+              style={{ fontSize: "6.5cqw", color: poster.acento }}
+            >
+              {fechaCorta}
+              <span className="font-semibold text-white/90" style={{ fontSize: "4.6cqw" }}>
+                {" "}
+                · {evento.ciudad}
+              </span>
+            </p>
+            <p
+              className="font-semibold uppercase tracking-wider text-white/80"
+              style={{ fontSize: "3.6cqw" }}
+            >
+              {evento.lugar}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      role="img"
+      aria-label={`Afiche de ${evento.artista}, ${evento.gira}`}
+      className={`relative isolate overflow-hidden [container-type:inline-size] ${className}`}
+      style={{ background: poster.fondo, color: poster.texto }}
+    >
+      <Decoracion estilo={poster.estilo} acento={poster.acento} />
+      <div className="relative mx-auto flex h-full max-w-[1500px] items-center justify-between gap-[4cqw] px-[5cqw] py-[3cqw]">
+        <div className="max-w-[58%]">
+          <span
+            className="inline-block rounded-[0.5cqw] bg-white/95 px-[1.2cqw] py-[0.4cqw] font-display font-bold uppercase tracking-[0.2em]"
+            style={{ fontSize: "1.5cqw", color: "#e25856" }}
+          >
+            {evento.gira}
+          </span>
+          <p
+            className="mt-[1.2cqw] font-display font-black uppercase"
+            style={{ fontSize: "5.6cqw", lineHeight: 0.95, textShadow: "0 0.3cqw 0 rgba(0,0,0,0.18)" }}
+          >
+            {evento.artista}
+          </p>
+          <p
+            className="mt-[1.6cqw] font-display leading-none font-black uppercase"
+            style={{ fontSize: "3.4cqw", color: poster.acento }}
+          >
+            {fechaCorta}
+          </p>
+          <p
+            className="mt-[0.8cqw] font-display leading-tight font-extrabold uppercase"
+            style={{ fontSize: "1.7cqw" }}
+          >
+            {evento.lugar} · {evento.ciudad}, Colombia
+          </p>
+        </div>
+        <div className="relative aspect-[744/510] h-[86%] shrink-0 rotate-[1.5deg] overflow-hidden rounded-[1.2cqw] shadow-[0_1.2cqw_3cqw_rgba(0,0,0,0.35)] ring-[0.5cqw] ring-white">
+          <Image
+            src={imagen.src}
+            alt=""
+            fill
+            loading="eager"
+            sizes="(min-width: 1024px) 40vw, 50vw"
+            className="object-cover"
+            style={{ objectPosition: imagen.posicion ?? "center" }}
+          />
+        </div>
+      </div>
     </div>
   );
 }

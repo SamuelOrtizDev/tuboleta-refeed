@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { IconoFlechaDer, IconoFlechaIzq } from "@/components/ui/Iconos";
@@ -13,6 +14,41 @@ type Slide = {
 };
 
 const slides: Slide[] = [
+  {
+    id: "juan-gabriel",
+    href: "/evento/juan-gabriel-en-concierto",
+    // Coral como fondo principal (el texto blanco y amarillo se lee bien) y el
+    // azul cielo del afiche solo en el extremo derecho, detrás de la foto.
+    fondo: "linear-gradient(110deg, #e25856 0%, #e25856 76%, #6dbce3 76%, #6dbce3 100%)",
+    contenido: (
+      <>
+        <div className="flex flex-col items-start gap-1.5">
+          <span className="rounded bg-white px-2 py-0.5 font-display text-[11px] font-bold tracking-[0.2em] text-[#e25856] uppercase md:text-sm">
+            En concierto
+          </span>
+          <p className="font-display text-3xl leading-none font-black text-white uppercase [text-shadow:0_2px_0_rgba(0,0,0,0.18)] md:text-5xl">
+            Juan Gabriel
+          </p>
+        </div>
+        <p className="hidden text-right font-bold whitespace-nowrap text-white xl:block xl:text-lg min-[1400px]:text-xl 2xl:text-2xl">
+          12 de diciembre · Centro Cultural de Cali
+          <span className="block text-base font-semibold text-[#fff3a8]">
+            Compra tus boletas aquí →
+          </span>
+        </p>
+        <span className="relative aspect-[744/510] h-20 shrink-0 rotate-2 overflow-hidden rounded-md shadow-lg ring-2 ring-white md:h-24">
+          <Image
+            src="/eventos/juan-gabriel.jpg"
+            alt=""
+            fill
+            sizes="160px"
+            className="object-cover"
+            style={{ objectPosition: "40% 25%" }}
+          />
+        </span>
+      </>
+    ),
+  },
   {
     id: "dias-estelares",
     href: "#",

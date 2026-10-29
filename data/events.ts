@@ -1,6 +1,8 @@
 /**
- * Eventos ficticios del prototipo. Artistas, giras y escenarios son inventados;
- * solo las ciudades son reales. Precios en pesos colombianos (enteros).
+ * Eventos del prototipo. Casi todos los artistas, giras y escenarios son
+ * inventados y solo las ciudades son reales. La excepción es el evento de
+ * Juan Gabriel, pedido a partir de una imagen de referencia.
+ * Precios en pesos colombianos (enteros).
  */
 
 export type Categoria = "conciertos" | "teatro" | "deportes" | "familiares";
@@ -22,6 +24,12 @@ export type Poster = {
   /** Color de acento (fecha, detalles). */
   acento: string;
   estilo: EstiloPoster;
+  /** Foto opcional del artista (ruta dentro de public/). Si existe, el afiche la usa. */
+  imagen?: {
+    src: string;
+    /** object-position CSS para encuadrar la cara, por ejemplo "40% 25%". */
+    posicion?: string;
+  };
 };
 
 export type Localidad = {
@@ -151,6 +159,67 @@ export const eventos: Evento[] = [
         aforo: 1600,
         secciones: ["401–410"],
         filas: 6,
+        asientosPorFila: 10,
+      },
+    ],
+  },
+  {
+    // Evento pedido a partir de referencias/juan gabriel.jpeg. Usa la foto del
+    // afiche (recortada, sin los textos ni logos originales) en public/eventos/.
+    slug: "juan-gabriel-en-concierto",
+    artista: "Juan Gabriel",
+    gira: "En concierto",
+    categoria: "conciertos",
+    ciudad: "Cali",
+    lugar: "Centro Cultural de Cali",
+    direccion: "Carrera 5 # 6-05, Cali",
+    fecha: "2026-12-12",
+    hora: "20:00",
+    apertura: "18:30",
+    edadMinima: "Todas las edades",
+    descripcion: [
+      "Revive la magia del Divo de Juárez en una noche dedicada a Juan Gabriel: su concierto proyectado en pantalla gigante, con sonido envolvente y mariachi en vivo acompañando cada canción.",
+      "«Querida», «Amor eterno», «Hasta que te conocí», «Te lo pido por favor» y «El Noa Noa», entre muchos otros éxitos, para cantar de principio a fin.",
+    ],
+    poster: {
+      fondo: "linear-gradient(135deg, #e25856 0%, #e25856 46%, #6dbce3 46%, #6dbce3 100%)",
+      texto: "#ffffff",
+      acento: "#f6e27a",
+      estilo: "retro",
+      imagen: { src: "/eventos/juan-gabriel.jpg", posicion: "40% 25%" },
+    },
+    destacado: "normal",
+    localidades: [
+      {
+        id: "platea-preferencial",
+        nombre: "Platea preferencial",
+        color: C.ladrillo,
+        precio: 220000,
+        servicio: 39600,
+        aforo: 320,
+        secciones: ["Filas A–F"],
+        filas: 6,
+        asientosPorFila: 10,
+      },
+      {
+        id: "platea-general",
+        nombre: "Platea general",
+        color: C.teal,
+        precio: 150000,
+        servicio: 27000,
+        aforo: 540,
+        secciones: ["Filas G–P"],
+        filas: 6,
+        asientosPorFila: 10,
+      },
+      {
+        id: "balcon",
+        nombre: "Balcón",
+        color: C.purpura,
+        precio: 90000,
+        servicio: 16200,
+        aforo: 280,
+        filas: 5,
         asientosPorFila: 10,
       },
     ],
